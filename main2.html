@@ -521,6 +521,8 @@
             display: flex;
             flex-direction: column;
             max-width: 70%;
+            position: relative;
+            transition: all 0.2s ease;
         }
 
             .message-wrapper.outgoing {
@@ -531,6 +533,24 @@
                 align-self: flex-start;
             }
 
+        .message-wrapper.deleted {
+            opacity: 0.4;
+        }
+
+        .message-wrapper.deleted .message {
+            background: #2c2c2e !important;
+            color: #6c6c70 !important;
+            font-style: italic;
+        }
+
+        .message-wrapper.deleted .message.outgoing {
+            background: #1a3a5a !important;
+        }
+
+        .message-wrapper.deleted .message.incoming {
+            background: #2c2c2e !important;
+        }
+
         .message {
             padding: 10px 14px;
             border-radius: 1.2rem;
@@ -540,6 +560,8 @@
             word-break: break-word;
             overflow-wrap: break-word;
             line-height: 1.4;
+            transition: all 0.2s ease;
+            cursor: pointer;
         }
 
             .message.outgoing {
@@ -695,6 +717,42 @@
 
         .hidden {
             display: none !important;
+        }
+
+        /* Меню удаления сообщения */
+        .message-menu {
+            position: fixed;
+            background: #2c2c2e;
+            border-radius: 1rem;
+            padding: 8px 0;
+            min-width: 150px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            display: none;
+            border: 1px solid #3a3a3c;
+        }
+
+        .message-menu-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #eef2ff;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .message-menu-item:hover {
+            background: #3a3a3c;
+        }
+
+        .message-menu-item.danger {
+            color: #ff3b30;
+        }
+
+        .message-menu-item.danger:hover {
+            background: #ff3b3020;
         }
 
         .flex-between {
@@ -1152,6 +1210,13 @@
         </div>
     </div>
 
+    <!-- Меню для удаления сообщения -->
+    <div class="message-menu" id="messageMenu">
+        <div class="message-menu-item danger" id="deleteMessageBtn">
+            <span>🗑️</span> Удалить для всех
+        </div>
+    </div>
+
     <script type="module">
         const firebaseConfig = {
             apiKey: "AIzaSyBzincDq0G49TbmmPulB3QFka5oak-xaJE",
@@ -1165,7 +1230,7 @@
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, where, getDocs, updateDoc, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, where, getDocs, updateDoc, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -1202,6 +1267,13 @@
         const registerForm = document.getElementById('registerForm');
         const resetForm = document.getElementById('resetForm');
         const authMsg = document.getElementById('authMsg');
+
+        // === ДЛЯ УДАЛЕНИЯ СООБЩЕНИЙ ===
+        const messageMenu = document.getElementById('messageMenu');
+        let selectedMessageId = null;
+        let longPressTimer = null;
+        let isLongPress = false;
+        let touchTimeout = null;
 
         function formatTime(timestamp) {
             if (!timestamp) return '';
@@ -1251,6 +1323,55 @@
             document.body.appendChild(n);
             setTimeout(() => n.remove(), 3000);
         }
+
+        // === ФУНКЦИЯ УДАЛЕНИЯ СООБЩЕНИЯ ===
+        async function deleteMessage(messageId) {
+            if (!messageId) return;
+            try {
+                await deleteDoc(doc(db, 'messages', messageId));
+                showNotification('✅ Сообщение удалено');
+                selectedMessageId = null;
+                hideMessageMenu();
+            } catch (error) {
+                console.error('Ошибка удаления:', error);
+                showNotification('❌ Ошибка при удалении', true);
+            }
+        }
+
+        function showMessageMenu(x, y, messageId) {
+            selectedMessageId = messageId;
+            messageMenu.style.display = 'block';
+            messageMenu.style.left = x + 'px';
+            messageMenu.style.top = y + 'px';
+
+            // Чтобы меню не выходило за экран
+            const rect = messageMenu.getBoundingClientRect();
+            if (rect.right > window.innerWidth) {
+                messageMenu.style.left = (window.innerWidth - rect.width - 10) + 'px';
+            }
+            if (rect.bottom > window.innerHeight) {
+                messageMenu.style.top = (window.innerHeight - rect.height - 10) + 'px';
+            }
+        }
+
+        function hideMessageMenu() {
+            messageMenu.style.display = 'none';
+            selectedMessageId = null;
+        }
+
+        // Обработчик удаления
+        document.getElementById('deleteMessageBtn')?.addEventListener('click', () => {
+            if (selectedMessageId) {
+                deleteMessage(selectedMessageId);
+            }
+        });
+
+        // Закрытие меню по клику вне его
+        document.addEventListener('click', (e) => {
+            if (!messageMenu.contains(e.target)) {
+                hideMessageMenu();
+            }
+        });
 
         async function isUsernameUnique(username, excludeUid = null) {
             const usersRef = collection(db, 'users');
@@ -1649,23 +1770,22 @@
                 return;
             }
             chatsList.innerHTML = chats.map(chat => `
-                                <div class="chat-item ${currentChatUser?.uid === chat.uid ? 'active' : ''}" onclick="window.selectChat('${chat.uid}')">
-                                    <div class="chat-avatar">
-                                        ${chat.avatar ? `<img src="${chat.avatar}">` : chat.name.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div class="chat-info">
-                                        <div class="chat-name">
-                                            ${chat.name}
-                                            <span class="chat-username">@${chat.username || 'unknown'}</span>
+                                    <div class="chat-item ${currentChatUser?.uid === chat.uid ? 'active' : ''}" onclick="window.selectChat('${chat.uid}')">
+                                        <div class="chat-avatar">
+                                            ${chat.avatar ? `<img src="${chat.avatar}">` : chat.name.charAt(0).toUpperCase()}
                                         </div>
-                                        <div class="chat-last-message">${chat.lastMessage?.substring(0, 30) || 'Нет сообщений'}</div>
+                                        <div class="chat-info">
+                                            <div class="chat-name">
+                                                ${chat.name}
+                                                <span class="chat-username">@${chat.username || 'unknown'}</span>
+                                            </div>
+                                            <div class="chat-last-message">${chat.lastMessage?.substring(0, 30) || 'Нет сообщений'}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            `).join('');
+                                `).join('');
         }
 
         window.selectChat = async (uid) => {
-            // Отписываемся от старых сообщений
             if (messagesUnsubscribe) {
                 messagesUnsubscribe();
                 messagesUnsubscribe = null;
@@ -1706,13 +1826,12 @@
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
 
-        // ОСНОВНАЯ ФУНКЦИЯ ЗАГРУЗКИ СООБЩЕНИЙ
+        // === ОБНОВЛЁННАЯ ФУНКЦИЯ ЗАГРУЗКИ СООБЩЕНИЙ С ПОДДЕРЖКОЙ УДАЛЕНИЯ ===
         function loadMessages() {
             if (!currentChatUser || !currentUser) return;
 
             const q = query(collection(db, 'messages'), orderBy('timestamp'));
             messagesUnsubscribe = onSnapshot(q, (snapshot) => {
-                // Полностью очищаем контейнер
                 messagesContainer.innerHTML = '';
                 let hasMessages = false;
                 let lastDateKey = null;
@@ -1720,6 +1839,11 @@
 
                 snapshot.forEach(docSnap => {
                     const msg = docSnap.data();
+                    const msgId = docSnap.id;
+                    
+                    // Проверяем, не удалено ли сообщение (если есть поле deleted)
+                    if (msg.deleted === true) return;
+
                     if ((msg.from === currentUser.uid && msg.to === currentChatUser.uid) ||
                         (msg.from === currentChatUser.uid && msg.to === currentUser.uid)) {
                         hasMessages = true;
@@ -1737,6 +1861,7 @@
 
                         const wrapper = document.createElement('div');
                         wrapper.className = `message-wrapper ${isOutgoing ? 'outgoing' : 'incoming'}`;
+                        wrapper.dataset.messageId = msgId;
 
                         const messageDiv = document.createElement('div');
                         messageDiv.className = `message ${isOutgoing ? 'outgoing' : 'incoming'}`;
@@ -1757,6 +1882,49 @@
                         timeDiv.textContent = formatTime(msg.timestamp);
                         wrapper.appendChild(timeDiv);
 
+                        // === ОБРАБОТЧИКИ ДЛЯ УДАЛЕНИЯ ===
+                        // Клик правой кнопкой мыши
+                        wrapper.addEventListener('contextmenu', (e) => {
+                            e.preventDefault();
+                            if (msg.from === currentUser.uid) { // Только свои сообщения можно удалять
+                                showMessageMenu(e.clientX, e.clientY, msgId);
+                            }
+                        });
+
+                        // Долгое нажатие (для мобильных устройств)
+                        let pressTimer = null;
+                        wrapper.addEventListener('mousedown', (e) => {
+                            if (msg.from !== currentUser.uid) return;
+                            pressTimer = setTimeout(() => {
+                                if (msg.from === currentUser.uid) {
+                                    showMessageMenu(e.clientX, e.clientY, msgId);
+                                }
+                            }, 600);
+                        });
+                        wrapper.addEventListener('mouseup', () => {
+                            clearTimeout(pressTimer);
+                        });
+                        wrapper.addEventListener('mouseleave', () => {
+                            clearTimeout(pressTimer);
+                        });
+
+                        // Touch события для мобильных
+                        wrapper.addEventListener('touchstart', (e) => {
+                            if (msg.from !== currentUser.uid) return;
+                            const touch = e.touches[0];
+                            pressTimer = setTimeout(() => {
+                                if (msg.from === currentUser.uid) {
+                                    showMessageMenu(touch.clientX, touch.clientY, msgId);
+                                }
+                            }, 600);
+                        });
+                        wrapper.addEventListener('touchend', () => {
+                            clearTimeout(pressTimer);
+                        });
+                        wrapper.addEventListener('touchmove', () => {
+                            clearTimeout(pressTimer);
+                        });
+
                         messagesContainer.appendChild(wrapper);
                     }
                 });
@@ -1766,7 +1934,6 @@
                     return;
                 }
 
-                // СОЗДАЁМ ЛИПКУЮ ШАПКУ В КОНЦЕ, ПОСЛЕ ВСЕХ СООБЩЕНИЙ
                 if (firstDivider) {
                     const header = document.createElement('div');
                     header.className = 'date-header';
@@ -1775,7 +1942,6 @@
                     messagesContainer.prepend(header);
                 }
 
-                // Добавляем слушатель скролла для обновления шапки
                 const updateStickyHeader = () => {
                     const header = document.getElementById('stickyDateHeader');
                     if (!header) return;
@@ -1799,16 +1965,13 @@
                     }
                 };
 
-                // Удаляем старый слушатель
                 if (messagesContainer._scrollListener) {
                     messagesContainer.removeEventListener('scroll', messagesContainer._scrollListener);
                 }
 
-                // Добавляем новый
                 messagesContainer._scrollListener = updateStickyHeader;
                 messagesContainer.addEventListener('scroll', updateStickyHeader);
 
-                // Вызываем сразу для установки
                 setTimeout(updateStickyHeader, 10);
 
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
