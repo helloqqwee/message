@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -184,6 +184,7 @@
                 background: #0f0f10;
                 color: white;
                 font-size: 0.9rem;
+                placeholder: "🔍 Поиск по @username";
             }
 
         .search-results {
@@ -303,6 +304,16 @@
             font-weight: 600;
             font-size: 1rem;
             margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .chat-username {
+            font-size: 0.7rem;
+            color: #98989e;
+            font-weight: normal;
         }
 
         .chat-last-message {
@@ -358,6 +369,11 @@
                     font-size: 1rem;
                     font-weight: 600;
                     margin-bottom: 2px;
+                }
+
+                .sidebar-footer .user-text .username {
+                    font-size: 0.65rem;
+                    color: #8e8e93;
                 }
 
                 .sidebar-footer .user-text .status {
@@ -423,6 +439,11 @@
             font-weight: 600;
         }
 
+        .chat-header-info .chat-header-username {
+            font-size: 0.7rem;
+            color: #8e8e93;
+        }
+
         .chat-header-info p {
             font-size: 0.75rem;
             color: #0a84ff;
@@ -434,8 +455,9 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
             display: none;
+            position: relative;
         }
 
             .messages-container::-webkit-scrollbar {
@@ -452,12 +474,64 @@
                 border-radius: 10px;
             }
 
-                .messages-container::-webkit-scrollbar-thumb:hover {
-                    background: #5e5ce0;
-                }
+        /* ЛИПКАЯ ШАПКА С ДАТОЙ */
+        .date-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            text-align: center;
+            padding: 10px 0 12px 0;
+            margin-bottom: 4px;
+            pointer-events: none;
+            background: transparent;
+        }
+
+            .date-header span {
+                background: rgba(44, 44, 46, 0.92);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                padding: 5px 16px;
+                border-radius: 1rem;
+                font-size: 0.75rem;
+                font-weight: 500;
+                color: #eef2ff;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+                display: inline-block;
+                letter-spacing: 0.3px;
+            }
+
+        /* Разделитель даты в ленте */
+        .date-divider {
+            text-align: center;
+            padding: 12px 0 14px 0;
+            font-size: 0.75rem;
+            color: #8e8e93;
+            width: 100%;
+        }
+
+            .date-divider span {
+                background: #2c2c2e;
+                padding: 4px 14px;
+                border-radius: 1rem;
+                font-weight: 500;
+                font-size: 0.7rem;
+            }
+
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+        }
+
+            .message-wrapper.outgoing {
+                align-self: flex-end;
+            }
+
+            .message-wrapper.incoming {
+                align-self: flex-start;
+            }
 
         .message {
-            max-width: 70%;
             padding: 10px 14px;
             border-radius: 1.2rem;
             font-size: 0.95rem;
@@ -471,15 +545,37 @@
             .message.outgoing {
                 background: #0a84ff;
                 color: white;
-                align-self: flex-end;
                 border-bottom-right-radius: 4px;
             }
 
             .message.incoming {
                 background: #2c2c2e;
-                align-self: flex-start;
+                color: #eef2ff;
                 border-bottom-left-radius: 4px;
             }
+
+        .message-sender {
+            font-size: 0.7rem;
+            color: #0a84ff;
+            margin-bottom: 3px;
+            margin-left: 8px;
+        }
+
+        .message-time {
+            font-size: 0.6rem;
+            color: #8e8e93;
+            margin-top: 3px;
+            margin-left: 4px;
+            margin-right: 4px;
+        }
+
+        .message-wrapper.outgoing .message-time {
+            text-align: right;
+        }
+
+        .message-wrapper.incoming .message-time {
+            text-align: left;
+        }
 
         .message-image {
             max-width: 200px;
@@ -488,10 +584,6 @@
             margin-top: 5px;
             cursor: pointer;
         }
-
-            .message-image:hover {
-                opacity: 0.8;
-            }
 
         .file-info {
             font-size: 0.75rem;
@@ -508,7 +600,6 @@
                 margin-left: 8px;
             }
 
-        /* КНОПКИ КАК В TELEGRAM */
         .message-input-area {
             padding: 16px 24px;
             background: #1c1c1e;
@@ -551,21 +642,6 @@
                     outline: none;
                 }
 
-                .message-input-area textarea::-webkit-scrollbar {
-                    width: 6px;
-                }
-
-                .message-input-area textarea::-webkit-scrollbar-track {
-                    background: #1c1c1e;
-                    border-radius: 10px;
-                }
-
-                .message-input-area textarea::-webkit-scrollbar-thumb {
-                    background: #0a84ff;
-                    border-radius: 10px;
-                }
-
-        /* Кнопка скрепки */
         .attach-btn {
             background: #2c2c2e;
             border: none;
@@ -586,11 +662,6 @@
                 transform: scale(1.05);
             }
 
-            .attach-btn:active {
-                transform: scale(0.95);
-            }
-
-        /* Кнопка отправки как в Telegram - синий круг с белым бумажным самолётиком */
         .send-btn {
             background: #0a84ff;
             border: none;
@@ -609,11 +680,6 @@
             .send-btn:hover {
                 background: #0063ce;
                 transform: scale(1.05);
-                box-shadow: 0 4px 12px rgba(10, 132, 255, 0.4);
-            }
-
-            .send-btn:active {
-                transform: scale(0.95);
             }
 
         .empty-state {
@@ -721,6 +787,13 @@
                     border-color: #0a84ff;
                     box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
                 }
+
+            .form-group small {
+                display: block;
+                margin-top: 5px;
+                font-size: 0.7rem;
+                color: #6c6c70;
+            }
 
         .save-btn {
             background: linear-gradient(135deg, #30d158, #28b045);
@@ -889,6 +962,41 @@
                 color: #6c6c70;
                 margin-top: 5px;
             }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #30d158;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 2rem;
+            z-index: 2000;
+            animation: fadeOut 3s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+
+            15% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            85% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+        }
     </style>
 </head>
 <body>
@@ -915,6 +1023,10 @@
             <div id="registerForm" style="display: none;">
                 <h2>Регистрация</h2>
                 <input type="text" id="regName" placeholder="Ваше имя">
+                <input type="text" id="regUsername" placeholder="Юзернейм (латиница, цифры, _)">
+                <div style="margin-top: -8px; margin-bottom: 12px;">
+                    <div style="font-size: 0.7rem; color: #6c6c70;">Пример: john_doe, kate123</div>
+                </div>
                 <input type="email" id="regEmail" placeholder="Email">
                 <input type="password" id="regPassword" placeholder="Пароль">
                 <button id="registerBtn">Создать аккаунт</button>
@@ -941,7 +1053,7 @@
             <div class="sidebar-header">
                 <h2>💬 Чаты</h2>
                 <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="🔍 Найти пользователя по имени..." autocomplete="off">
+                    <input type="text" id="searchInput" placeholder="🔍 Поиск по @username..." autocomplete="off">
                     <div id="searchResults" class="search-results hidden"></div>
                 </div>
             </div>
@@ -955,6 +1067,7 @@
                     </div>
                     <div class="user-text">
                         <div class="name" id="myName">Загрузка...</div>
+                        <div class="username" id="myUsername"></div>
                         <div class="status" id="myOnlineStatus">🔵 в сети</div>
                     </div>
                 </div>
@@ -967,6 +1080,7 @@
                 <div class="chat-header-avatar" id="chatHeaderAvatar">🤖</div>
                 <div class="chat-header-info">
                     <h3 id="chatHeaderName">Выберите чат</h3>
+                    <div class="chat-header-username" id="chatHeaderUsername"></div>
                     <p id="chatHeaderStatus"></p>
                 </div>
             </div>
@@ -1006,8 +1120,14 @@
             <div class="settings-divider"></div>
 
             <div class="form-group">
-                <label>👤 Имя</label>
+                <label>👤 Отображаемое имя</label>
                 <input type="text" id="modalName" placeholder="Ваше имя">
+            </div>
+
+            <div class="form-group">
+                <label>🔖 Юзернейм (@username)</label>
+                <small style="display: block; margin-bottom: 5px; color: #6c6c70;">Только латиница, цифры и _. Уникальный.</small>
+                <input type="text" id="modalUsername" placeholder="username">
             </div>
 
             <div class="form-group">
@@ -1056,6 +1176,8 @@
         let chats = [];
         let onlineStatusUnsubscribe = null;
         let userStatusUnsubscribe = null;
+        let presenceInterval = null;
+        let messagesUnsubscribe = null;
 
         const messengerEl = document.getElementById('messenger');
         const loginContainer = document.getElementById('loginContainer');
@@ -1070,63 +1192,119 @@
         const emptyState = document.getElementById('emptyState');
         const messageInput = document.getElementById('messageInput');
         const myAvatar = document.getElementById('myAvatar');
-        const myAvatarLetter = document.getElementById('myAvatarLetter');
+        const myName = document.getElementById('myName');
+        const myUsername = document.getElementById('myUsername');
         const chatHeaderStatus = document.getElementById('chatHeaderStatus');
         const myOnlineStatus = document.getElementById('myOnlineStatus');
+        const chatHeaderUsername = document.getElementById('chatHeaderUsername');
 
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
         const resetForm = document.getElementById('resetForm');
         const authMsg = document.getElementById('authMsg');
 
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+
+            if (date.getDate() === today.getDate() &&
+                date.getMonth() === today.getMonth() &&
+                date.getFullYear() === today.getFullYear()) {
+                return 'Сегодня';
+            }
+
+            if (date.getDate() === yesterday.getDate() &&
+                date.getMonth() === yesterday.getMonth() &&
+                date.getFullYear() === yesterday.getFullYear()) {
+                return 'Вчера';
+            }
+
+            return `${day}.${month}.${year}`;
+        }
+
+        function getDateKey(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+        }
+
+        function showNotification(msg, isErr = false) {
+            const n = document.createElement('div');
+            n.className = 'notification';
+            n.textContent = msg;
+            n.style.background = isErr ? '#ff3b30' : '#30d158';
+            document.body.appendChild(n);
+            setTimeout(() => n.remove(), 3000);
+        }
+
+        async function isUsernameUnique(username, excludeUid = null) {
+            const usersRef = collection(db, 'users');
+            const q = query(usersRef, where('username', '==', username));
+            const snapshot = await getDocs(q);
+            if (snapshot.empty) return true;
+            if (excludeUid && snapshot.docs[0].data().uid === excludeUid) return true;
+            return false;
+        }
+
+        function validateUsername(username) {
+            const regex = /^[a-zA-Z0-9_]+$/;
+            if (!username || username.length < 3) return 'Юзернейм должен быть не менее 3 символов';
+            if (username.length > 20) return 'Юзернейм не должен превышать 20 символов';
+            if (!regex.test(username)) return 'Юзернейм может содержать только латиницу, цифры и _';
+            return null;
+        }
+
+        function getUserStatusText(userData) {
+            if (userData.online === true && (!userData.lastSeen || Date.now() - userData.lastSeen < 120000)) {
+                return { text: '🔵 в сети', color: '#0a84ff', isOnline: true };
+            }
+            return { text: '⚪ не в сети', color: '#8e8e93', isOnline: false };
+        }
+
         async function sendBase64File(file, fileType) {
             if (!currentChatUser) {
                 alert('❌ Сначала выберите чат!');
                 return false;
             }
-
-            if (!file) return false;
-
             if (file.size > 5 * 1024 * 1024) {
                 alert('❌ Файл слишком большой! Максимум 5MB');
                 return false;
             }
-
             const loadingMsg = document.createElement('div');
             loadingMsg.textContent = '⏳ Загрузка файла...';
             loadingMsg.style.cssText = 'position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#0a84ff; color:white; padding:10px 20px; border-radius:2rem; z-index:2000;';
             document.body.appendChild(loadingMsg);
-
             try {
                 const reader = new FileReader();
-
                 const result = await new Promise((resolve, reject) => {
                     reader.onload = () => resolve(reader.result);
                     reader.onerror = reject;
                     reader.readAsDataURL(file);
                 });
-
                 await addDoc(collection(db, 'messages'), {
                     from: currentUser.uid,
                     to: currentChatUser.uid,
                     text: '',
-                    file: {
-                        data: result,
-                        name: file.name,
-                        size: file.size,
-                        type: fileType,
-                        mimeType: file.type
-                    },
+                    file: { data: result, name: file.name, size: file.size, type: fileType, mimeType: file.type },
                     timestamp: Date.now()
                 });
-
                 loadingMsg.remove();
-                const successMsg = document.createElement('div');
-                successMsg.textContent = '✅ Файл отправлен!';
-                successMsg.style.cssText = 'position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#30d158; color:white; padding:10px 20px; border-radius:2rem; z-index:2000;';
-                document.body.appendChild(successMsg);
-                setTimeout(() => successMsg.remove(), 2000);
-
+                showNotification('✅ Файл отправлен!');
                 return true;
             } catch (error) {
                 console.error('Ошибка:', error);
@@ -1153,71 +1331,46 @@
             input.click();
         });
 
-        async function updateMyOnlineStatus(isOnline) {
-            if (currentUser) {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    online: isOnline,
-                    lastSeen: Date.now()
-                });
-                if (myOnlineStatus) {
-                    if (isOnline) {
-                        myOnlineStatus.innerHTML = '🔵 в сети';
-                        myOnlineStatus.style.color = '#0a84ff';
-                    } else {
-                        myOnlineStatus.innerHTML = '⚪ не в сети';
-                        myOnlineStatus.style.color = '#8e8e93';
-                    }
-                }
-            }
-        }
-
         function subscribeToMyStatus() {
-            if (userStatusUnsubscribe) {
-                userStatusUnsubscribe();
-            }
+            if (userStatusUnsubscribe) userStatusUnsubscribe();
             if (currentUser) {
                 userStatusUnsubscribe = onSnapshot(doc(db, 'users', currentUser.uid), (docSnap) => {
                     if (docSnap.exists() && myOnlineStatus) {
                         const userData = docSnap.data();
-                        const isOnline = userData.online === true;
-                        if (isOnline) {
-                            myOnlineStatus.innerHTML = '🔵 в сети';
-                            myOnlineStatus.style.color = '#0a84ff';
-                        } else {
-                            myOnlineStatus.innerHTML = '⚪ не в сети';
-                            myOnlineStatus.style.color = '#8e8e93';
-                        }
+                        const status = getUserStatusText(userData);
+                        myOnlineStatus.innerHTML = status.text;
+                        myOnlineStatus.style.color = status.color;
                     }
                 });
+            }
+        }
+
+        async function updatePresence() {
+            if (currentUser) {
+                await updateDoc(doc(db, 'users', currentUser.uid), { online: true, lastSeen: Date.now() });
             }
         }
 
         async function setupPresence() {
             if (!currentUser) return;
-            const userRef = doc(db, 'users', currentUser.uid);
-            try {
-                await updateDoc(userRef, { online: true, lastSeen: Date.now() });
-                const disconnectRef = doc(db, 'users', currentUser.uid);
-                await setDoc(disconnectRef, { online: false, lastSeen: Date.now() }, { merge: true });
-            } catch (e) {
-                console.error('Presence setup error:', e);
-            }
+            if (presenceInterval) clearInterval(presenceInterval);
+            await updatePresence();
+            presenceInterval = setInterval(updatePresence, 30000);
+            window.addEventListener('beforeunload', () => {
+                if (currentUser) updateDoc(doc(db, 'users', currentUser.uid), { online: false, lastSeen: Date.now() });
+            });
         }
 
         function subscribeToUserStatus(userId, callback) {
             return onSnapshot(doc(db, 'users', userId), (docSnap) => {
                 if (docSnap.exists()) {
-                    const userData = docSnap.data();
-                    callback(userData.online === true);
+                    callback(getUserStatusText(docSnap.data()).isOnline);
                 }
             });
         }
 
         function setupStatusListener() {
-            if (onlineStatusUnsubscribe) {
-                onlineStatusUnsubscribe();
-                onlineStatusUnsubscribe = null;
-            }
+            if (onlineStatusUnsubscribe) onlineStatusUnsubscribe();
             if (currentChatUser && currentChatUser.uid) {
                 onlineStatusUnsubscribe = subscribeToUserStatus(currentChatUser.uid, (isOnline) => {
                     if (isOnline) {
@@ -1233,11 +1386,7 @@
 
         function updateMyAvatar() {
             if (currentUser && myAvatar) {
-                if (currentUser.avatar) {
-                    myAvatar.innerHTML = `<img src="${currentUser.avatar}">`;
-                } else {
-                    myAvatar.innerHTML = `<span id="myAvatarLetter">${currentUser.name?.charAt(0).toUpperCase() || '👤'}</span>`;
-                }
+                myAvatar.innerHTML = currentUser.avatar ? `<img src="${currentUser.avatar}">` : `<span>${currentUser.name?.charAt(0).toUpperCase() || '👤'}</span>`;
             }
         }
 
@@ -1247,185 +1396,128 @@
                 messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
             }
         }
+        messageInput?.addEventListener('input', autoResizeTextarea);
 
-        if (messageInput) {
-            messageInput.addEventListener('input', autoResizeTextarea);
-        }
-
-        document.getElementById('showRegisterBtn').addEventListener('click', () => {
+        document.getElementById('showRegisterBtn')?.addEventListener('click', () => {
             loginForm.style.display = 'none';
             registerForm.style.display = 'block';
             resetForm.style.display = 'none';
             authMsg.innerHTML = '';
         });
 
-        document.getElementById('showLoginBtn').addEventListener('click', () => {
+        document.getElementById('showLoginBtn')?.addEventListener('click', () => {
             registerForm.style.display = 'none';
             loginForm.style.display = 'block';
             resetForm.style.display = 'none';
             authMsg.innerHTML = '';
         });
 
-        document.getElementById('forgotPasswordBtn').addEventListener('click', () => {
+        document.getElementById('forgotPasswordBtn')?.addEventListener('click', () => {
             loginForm.style.display = 'none';
             registerForm.style.display = 'none';
             resetForm.style.display = 'block';
             authMsg.innerHTML = '';
         });
 
-        document.getElementById('backToLoginBtn').addEventListener('click', () => {
+        document.getElementById('backToLoginBtn')?.addEventListener('click', () => {
             resetForm.style.display = 'none';
             loginForm.style.display = 'block';
             authMsg.innerHTML = '';
         });
 
         window.resetPassword = async () => {
-            const email = document.getElementById('resetEmail').value.trim();
-            if (!email) {
-                authMsg.innerHTML = '<span style="color:#ff453a;">❌ Введите ваш email!</span>';
-                return;
-            }
+            const email = document.getElementById('resetEmail')?.value.trim();
+            if (!email) { authMsg.innerHTML = '<span style="color:#ff453a;">❌ Введите email</span>'; return; }
             try {
                 await sendPasswordResetEmail(auth, email);
-                authMsg.innerHTML = '<span style="color:#30d158;">✅ Письмо отправлено! Проверьте почту (и папку Спам).</span>';
-                document.getElementById('resetEmail').value = '';
+                authMsg.innerHTML = '<span style="color:#30d158;">✅ Письмо отправлено</span>';
                 setTimeout(() => {
                     resetForm.style.display = 'none';
                     loginForm.style.display = 'block';
-                    authMsg.innerHTML = '';
-                }, 4000);
-            } catch (error) {
-                if (error.code === 'auth/user-not-found') {
-                    authMsg.innerHTML = '<span style="color:#ff453a;">❌ Пользователь не найден!</span>';
-                } else {
-                    authMsg.innerHTML = '<span style="color:#ff453a;">❌ Ошибка: ' + error.message + '</span>';
-                }
-            }
+                }, 3000);
+            } catch (e) { authMsg.innerHTML = '<span style="color:#ff453a;">❌ Ошибка</span>'; }
         };
-
-        document.getElementById('resetPasswordBtn').addEventListener('click', () => window.resetPassword());
+        document.getElementById('resetPasswordBtn')?.addEventListener('click', () => window.resetPassword());
 
         function updateAllAvatars(avatarBase64) {
-            const modalContentDiv = document.getElementById('modalAvatarContent');
-            if (avatarBase64) {
-                modalContentDiv.innerHTML = `<img src="${avatarBase64}">`;
-            } else {
-                modalContentDiv.innerHTML = currentUser?.name?.charAt(0).toUpperCase() || '👤';
-            }
+            const modalContent = document.getElementById('modalAvatarContent');
+            modalContent.innerHTML = avatarBase64 ? `<img src="${avatarBase64}">` : currentUser?.name?.charAt(0).toUpperCase() || '👤';
             updateMyAvatar();
             renderChatsList();
-            if (currentChatUser) {
-                updateChatHeader();
-            }
+            if (currentChatUser) updateChatHeader();
         }
 
         async function uploadAvatar(file) {
-            if (!file || !currentUser) {
-                alert('Сначала войдите в аккаунт!');
-                return;
-            }
-            if (file.size > 2 * 1024 * 1024) {
-                alert('❌ Файл слишком большой! Максимум 2MB');
-                return;
-            }
-            if (!file.type.startsWith('image/')) {
-                alert('❌ Пожалуйста, выберите изображение!');
-                return;
-            }
-            try {
-                const modalContentDiv = document.getElementById('modalAvatarContent');
-                modalContentDiv.innerHTML = '⏳';
-                const reader = new FileReader();
-                reader.onload = async function (e) {
-                    const base64 = e.target.result;
-                    await updateDoc(doc(db, 'users', currentUser.uid), { avatar: base64 });
-                    currentUser.avatar = base64;
-                    updateAllAvatars(base64);
-                    const msg = document.createElement('div');
-                    msg.textContent = '✅ Аватар успешно обновлён!';
-                    msg.style.cssText = 'position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#30d158; color:white; padding:10px 20px; border-radius:2rem; z-index:2000;';
-                    document.body.appendChild(msg);
-                    setTimeout(() => msg.remove(), 2000);
-                };
-                reader.readAsDataURL(file);
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('❌ Ошибка при загрузке аватара: ' + error.message);
-                updateAllAvatars(currentUser?.avatar);
-            }
+            if (!file || !currentUser) return;
+            if (file.size > 2 * 1024 * 1024) { alert('❌ Максимум 2MB'); return; }
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                await updateDoc(doc(db, 'users', currentUser.uid), { avatar: e.target.result });
+                currentUser.avatar = e.target.result;
+                updateAllAvatars(e.target.result);
+                showNotification('✅ Аватар обновлён');
+            };
+            reader.readAsDataURL(file);
         }
-
-        avatarInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                await uploadAvatar(file);
-            }
-            avatarInput.value = '';
-        });
+        avatarInput?.addEventListener('change', (e) => e.target.files[0] && uploadAvatar(e.target.files[0]));
 
         window.register = async () => {
             const name = document.getElementById('regName').value.trim();
+            const username = document.getElementById('regUsername').value.trim().toLowerCase();
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
-            if (!name || !email || !password) {
-                authMsg.innerHTML = '<span style="color:#ff453a;">❌ Заполните все поля!</span>';
+
+            const usernameError = validateUsername(username);
+            if (usernameError) {
+                authMsg.innerHTML = `<span style="color:#ff453a;">❌ ${usernameError}</span>`;
                 return;
             }
+
+            if (!name || !email || !password) {
+                authMsg.innerHTML = '<span style="color:#ff453a;">❌ Заполните все поля</span>';
+                return;
+            }
+
+            const isUnique = await isUsernameUnique(username);
+            if (!isUnique) {
+                authMsg.innerHTML = '<span style="color:#ff453a;">❌ Этот юзернейм уже занят</span>';
+                return;
+            }
+
             try {
-                const userCred = await createUserWithEmailAndPassword(auth, email, password);
-                await setDoc(doc(db, 'users', userCred.user.uid), {
-                    uid: userCred.user.uid,
-                    name: name,
-                    email: email,
-                    online: true,
-                    avatar: null,
-                    createdAt: Date.now()
+                const cred = await createUserWithEmailAndPassword(auth, email, password);
+                await setDoc(doc(db, 'users', cred.user.uid), {
+                    uid: cred.user.uid, name, username, email, online: true, lastSeen: Date.now(), avatar: null, createdAt: Date.now()
                 });
-                authMsg.innerHTML = '<span style="color:#30d158;">✅ Аккаунт создан! Теперь войдите.</span>';
-                setTimeout(() => authMsg.innerHTML = '', 2000);
-                document.getElementById('regName').value = '';
-                document.getElementById('regEmail').value = '';
-                document.getElementById('regPassword').value = '';
+                authMsg.innerHTML = '<span style="color:#30d158;">✅ Аккаунт создан! Войдите</span>';
                 registerForm.style.display = 'none';
                 loginForm.style.display = 'block';
             } catch (e) {
                 if (e.code === 'auth/email-already-in-use') {
-                    authMsg.innerHTML = '<span style="color:#ff453a;">❌ Этот email уже зарегистрирован!</span>';
+                    authMsg.innerHTML = '<span style="color:#ff453a;">❌ Email уже используется</span>';
                 } else {
                     authMsg.innerHTML = '<span style="color:#ff453a;">❌ Ошибка: ' + e.message + '</span>';
                 }
             }
         };
+        document.getElementById('registerBtn')?.addEventListener('click', () => window.register());
 
         window.login = async () => {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
-            if (!email || !password) {
-                authMsg.innerHTML = '<span style="color:#ff453a;">❌ Введите email и пароль!</span>';
-                return;
-            }
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (e) {
-                authMsg.innerHTML = '<span style="color:#ff453a;">❌ Неверный email или пароль</span>';
-            }
+            if (!email || !password) { authMsg.innerHTML = '<span style="color:#ff453a;">❌ Введите email и пароль</span>'; return; }
+            try { await signInWithEmailAndPassword(auth, email, password); }
+            catch (e) { authMsg.innerHTML = '<span style="color:#ff453a;">❌ Неверный email или пароль</span>'; }
         };
+        document.getElementById('loginBtn')?.addEventListener('click', () => window.login());
 
         async function logout() {
-            if (currentUser) {
-                await updateDoc(doc(db, 'users', currentUser.uid), { online: false, lastSeen: Date.now() });
-            }
-            if (settingsModal) {
-                settingsModal.classList.add('hidden');
-            }
-            if (onlineStatusUnsubscribe) {
-                onlineStatusUnsubscribe();
-                onlineStatusUnsubscribe = null;
-            }
-            if (userStatusUnsubscribe) {
-                userStatusUnsubscribe();
-                userStatusUnsubscribe = null;
-            }
+            if (settingsModal) settingsModal.classList.add('hidden');
+            if (currentUser) await updateDoc(doc(db, 'users', currentUser.uid), { online: false, lastSeen: Date.now() });
+            if (onlineStatusUnsubscribe) onlineStatusUnsubscribe();
+            if (userStatusUnsubscribe) userStatusUnsubscribe();
+            if (presenceInterval) clearInterval(presenceInterval);
+            if (messagesUnsubscribe) messagesUnsubscribe();
             await signOut(auth);
         }
 
@@ -1434,26 +1526,31 @@
                 searchResults.classList.add('hidden');
                 return;
             }
+
+            let cleanSearch = searchText.trim().toLowerCase();
+            if (cleanSearch.startsWith('@')) cleanSearch = cleanSearch.substring(1);
+
             const snapshot = await getDocs(collection(db, 'users'));
             const results = [];
             snapshot.forEach(docSnap => {
                 const user = docSnap.data();
                 if (user.uid !== currentUser?.uid &&
-                    user.name.toLowerCase().includes(searchText.toLowerCase())) {
+                    user.username && user.username.toLowerCase().includes(cleanSearch)) {
                     results.push(user);
                 }
             });
+
             if (results.length > 0) {
                 searchResults.classList.remove('hidden');
                 searchResults.innerHTML = results.map(user => `
-                                            <div class="search-result-item">
-                                                <span><strong>${user.name}</strong> (${user.email})</span>
-                                                <button class="add-friend-btn" onclick="window.startChatWith('${user.uid}')">💬 Написать</button>
-                                            </div>
-                                        `).join('');
+                                    <div class="search-result-item">
+                                        <span><strong>${user.name}</strong> <span style="color:#8e8e93; font-size:0.75rem;">@${user.username}</span></span>
+                                        <button class="add-friend-btn" onclick="window.startChatWith('${user.uid}')">💬 Написать</button>
+                                    </div>
+                                `).join('');
             } else {
                 searchResults.classList.remove('hidden');
-                searchResults.innerHTML = '<div style="padding: 10px; color: #98989e;">👤 Пользователь не найден</div>';
+                searchResults.innerHTML = '<div style="padding: 10px;">👤 Пользователь не найден</div>';
             }
         }
 
@@ -1470,7 +1567,12 @@
                 messageInputArea.style.display = 'flex';
                 emptyState.style.display = 'none';
                 if (!chats.find(c => c.uid === friendUid)) {
-                    chats.unshift({ uid: friendUid, name: friend.name, avatar: friend.avatar });
+                    chats.unshift({
+                        uid: friendUid,
+                        name: friend.name,
+                        username: friend.username,
+                        avatar: friend.avatar
+                    });
                     renderChatsList();
                 }
             }
@@ -1480,31 +1582,63 @@
 
         async function loadChats() {
             if (!currentUser) return;
+
+            const userChatRef = doc(db, 'userChats', currentUser.uid);
+            const userChatDoc = await getDoc(userChatRef);
+            const savedChats = userChatDoc.exists() ? (userChatDoc.data().chats || []) : [];
+
+            const chatUsers = new Map();
+
+            for (const chat of savedChats) {
+                if (chat.type === 'private') {
+                    const userDoc = await getDoc(doc(db, 'users', chat.id));
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        chatUsers.set(chat.id, {
+                            uid: chat.id,
+                            name: userData.name,
+                            username: userData.username,
+                            avatar: userData.avatar,
+                            lastMessage: chat.lastMessage || '',
+                            lastTime: chat.lastTime || 0
+                        });
+                    }
+                }
+            }
+
             const q = query(collection(db, 'messages'), orderBy('timestamp', 'desc'));
             onSnapshot(q, async (snapshot) => {
-                const chatUsers = new Map();
                 for (const docSnap of snapshot.docs) {
                     const msg = docSnap.data();
                     if (msg.from === currentUser.uid || msg.to === currentUser.uid) {
                         const friendId = msg.from === currentUser.uid ? msg.to : msg.from;
-                        if (!chatUsers.has(friendId)) {
-                            const userDoc = await getDoc(doc(db, 'users', friendId));
-                            if (userDoc.exists()) {
-                                const userData = userDoc.data();
-                                chatUsers.set(friendId, {
-                                    uid: friendId,
-                                    name: userData.name,
-                                    avatar: userData.avatar,
-                                    lastMessage: msg.text || (msg.file ? (msg.file.type === 'image' ? '📷 Фото' : '📎 Файл') : ''),
-                                    lastTime: msg.timestamp,
-                                    online: userData.online
-                                });
+                        if (friendId) {
+                            if (chatUsers.has(friendId)) {
+                                const existing = chatUsers.get(friendId);
+                                if (msg.timestamp > (existing.lastTime || 0)) {
+                                    existing.lastMessage = msg.text || (msg.file ? (msg.file.type === 'image' ? '📷 Фото' : '📎 Файл') : '');
+                                    existing.lastTime = msg.timestamp;
+                                    chatUsers.set(friendId, existing);
+                                }
+                            } else {
+                                const userDoc = await getDoc(doc(db, 'users', friendId));
+                                if (userDoc.exists()) {
+                                    const userData = userDoc.data();
+                                    chatUsers.set(friendId, {
+                                        uid: friendId,
+                                        name: userData.name,
+                                        username: userData.username,
+                                        avatar: userData.avatar,
+                                        lastMessage: msg.text || (msg.file ? (msg.file.type === 'image' ? '📷 Фото' : '📎 Файл') : ''),
+                                        lastTime: msg.timestamp
+                                    });
+                                }
                             }
                         }
                     }
                 }
-                chats = Array.from(chatUsers.values())
-                    .sort((a, b) => (b.lastTime || 0) - (a.lastTime || 0));
+
+                chats = Array.from(chatUsers.values()).sort((a, b) => (b.lastTime || 0) - (a.lastTime || 0));
                 renderChatsList();
             });
         }
@@ -1515,19 +1649,28 @@
                 return;
             }
             chatsList.innerHTML = chats.map(chat => `
-                                        <div class="chat-item ${currentChatUser?.uid === chat.uid ? 'active' : ''}" onclick="window.selectChat('${chat.uid}')">
-                                            <div class="chat-avatar">
-                                                ${chat.avatar ? `<img src="${chat.avatar}">` : chat.name.charAt(0).toUpperCase()}
-                                            </div>
-                                            <div class="chat-info">
-                                                <div class="chat-name">${chat.name}</div>
-                                                <div class="chat-last-message">${chat.lastMessage?.substring(0, 30) || 'Нет сообщений'}</div>
-                                            </div>
+                                <div class="chat-item ${currentChatUser?.uid === chat.uid ? 'active' : ''}" onclick="window.selectChat('${chat.uid}')">
+                                    <div class="chat-avatar">
+                                        ${chat.avatar ? `<img src="${chat.avatar}">` : chat.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div class="chat-info">
+                                        <div class="chat-name">
+                                            ${chat.name}
+                                            <span class="chat-username">@${chat.username || 'unknown'}</span>
                                         </div>
-                                    `).join('');
+                                        <div class="chat-last-message">${chat.lastMessage?.substring(0, 30) || 'Нет сообщений'}</div>
+                                    </div>
+                                </div>
+                            `).join('');
         }
 
         window.selectChat = async (uid) => {
+            // Отписываемся от старых сообщений
+            if (messagesUnsubscribe) {
+                messagesUnsubscribe();
+                messagesUnsubscribe = null;
+            }
+
             const userDoc = await getDoc(doc(db, 'users', uid));
             if (userDoc.exists()) {
                 currentChatUser = { uid, ...userDoc.data() };
@@ -1545,14 +1688,14 @@
         function updateChatHeader() {
             if (currentChatUser) {
                 document.getElementById('chatHeaderName').innerText = currentChatUser.name;
-                const headerAvatar = document.getElementById('chatHeaderAvatar');
-                if (currentChatUser.avatar) {
-                    headerAvatar.innerHTML = `<img src="${currentChatUser.avatar}">`;
-                } else {
-                    headerAvatar.innerHTML = currentChatUser.name.charAt(0).toUpperCase();
+                if (chatHeaderUsername) {
+                    chatHeaderUsername.innerText = `@${currentChatUser.username || 'unknown'}`;
                 }
+                const headerAvatar = document.getElementById('chatHeaderAvatar');
+                headerAvatar.innerHTML = currentChatUser.avatar ? `<img src="${currentChatUser.avatar}">` : currentChatUser.name.charAt(0).toUpperCase();
             } else {
                 document.getElementById('chatHeaderName').innerText = 'Выберите чат';
+                if (chatHeaderUsername) chatHeaderUsername.innerText = '';
                 chatHeaderStatus.innerHTML = '';
             }
         }
@@ -1563,55 +1706,118 @@
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
 
+        // ОСНОВНАЯ ФУНКЦИЯ ЗАГРУЗКИ СООБЩЕНИЙ
         function loadMessages() {
             if (!currentChatUser || !currentUser) return;
+
             const q = query(collection(db, 'messages'), orderBy('timestamp'));
-            onSnapshot(q, (snapshot) => {
+            messagesUnsubscribe = onSnapshot(q, (snapshot) => {
+                // Полностью очищаем контейнер
                 messagesContainer.innerHTML = '';
                 let hasMessages = false;
+                let lastDateKey = null;
+                let firstDivider = null;
+
                 snapshot.forEach(docSnap => {
                     const msg = docSnap.data();
                     if ((msg.from === currentUser.uid && msg.to === currentChatUser.uid) ||
                         (msg.from === currentChatUser.uid && msg.to === currentUser.uid)) {
                         hasMessages = true;
-                        const div = document.createElement('div');
-                        div.className = `message ${msg.from === currentUser.uid ? 'outgoing' : 'incoming'}`;
+                        const isOutgoing = msg.from === currentUser.uid;
+                        const currentDateKey = getDateKey(msg.timestamp);
+
+                        if (currentDateKey !== lastDateKey) {
+                            const dateDivider = document.createElement('div');
+                            dateDivider.className = 'date-divider';
+                            dateDivider.textContent = formatDate(msg.timestamp);
+                            messagesContainer.appendChild(dateDivider);
+                            lastDateKey = currentDateKey;
+                            if (!firstDivider) firstDivider = dateDivider;
+                        }
+
+                        const wrapper = document.createElement('div');
+                        wrapper.className = `message-wrapper ${isOutgoing ? 'outgoing' : 'incoming'}`;
+
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `message ${isOutgoing ? 'outgoing' : 'incoming'}`;
 
                         if (msg.text) {
-                            div.innerHTML = msg.text;
+                            messageDiv.innerHTML = msg.text;
                         } else if (msg.file) {
                             if (msg.file.type === 'image') {
-                                div.innerHTML = `
-                                                    📷 Изображение<br>
-                                                    <img src="${msg.file.data}" class="message-image" onclick="window.open('${msg.file.data}', '_blank')">
-                                                    <div class="file-info">
-                                                        📄 ${msg.file.name} (${formatFileSize(msg.file.size)})
-                                                        <a href="${msg.file.data}" download="${msg.file.name}" target="_blank">⬇️ Скачать</a>
-                                                    </div>
-                                                `;
+                                messageDiv.innerHTML = `📷 Изображение<br><img src="${msg.file.data}" class="message-image" onclick="window.open('${msg.file.data}', '_blank')"><div class="file-info">📄 ${msg.file.name}<a href="${msg.file.data}" download>⬇️</a></div>`;
                             } else {
-                                div.innerHTML = `
-                                                    📎 Файл<br>
-                                                    <div class="file-info">
-                                                        📄 ${msg.file.name} (${formatFileSize(msg.file.size)})
-                                                        <a href="${msg.file.data}" download="${msg.file.name}" target="_blank">⬇️ Скачать</a>
-                                                    </div>
-                                                `;
+                                messageDiv.innerHTML = `📎 Файл<br><div class="file-info">📄 ${msg.file.name}<a href="${msg.file.data}" download>⬇️</a></div>`;
                             }
                         }
-                        messagesContainer.appendChild(div);
+                        wrapper.appendChild(messageDiv);
+
+                        const timeDiv = document.createElement('div');
+                        timeDiv.className = 'message-time';
+                        timeDiv.textContent = formatTime(msg.timestamp);
+                        wrapper.appendChild(timeDiv);
+
+                        messagesContainer.appendChild(wrapper);
                     }
                 });
+
                 if (!hasMessages) {
                     messagesContainer.innerHTML = '<div class="empty-chat">💬 Напишите первое сообщение!</div>';
+                    return;
                 }
+
+                // СОЗДАЁМ ЛИПКУЮ ШАПКУ В КОНЦЕ, ПОСЛЕ ВСЕХ СООБЩЕНИЙ
+                if (firstDivider) {
+                    const header = document.createElement('div');
+                    header.className = 'date-header';
+                    header.id = 'stickyDateHeader';
+                    header.innerHTML = `<span>${firstDivider.textContent}</span>`;
+                    messagesContainer.prepend(header);
+                }
+
+                // Добавляем слушатель скролла для обновления шапки
+                const updateStickyHeader = () => {
+                    const header = document.getElementById('stickyDateHeader');
+                    if (!header) return;
+
+                    const dividers = messagesContainer.querySelectorAll('.date-divider');
+                    let currentDate = null;
+
+                    for (const divider of dividers) {
+                        const rect = divider.getBoundingClientRect();
+                        const containerRect = messagesContainer.getBoundingClientRect();
+                        if (rect.top <= containerRect.top + 20) {
+                            currentDate = divider.textContent.trim();
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if (currentDate) {
+                        const span = header.querySelector('span');
+                        if (span) span.textContent = currentDate;
+                    }
+                };
+
+                // Удаляем старый слушатель
+                if (messagesContainer._scrollListener) {
+                    messagesContainer.removeEventListener('scroll', messagesContainer._scrollListener);
+                }
+
+                // Добавляем новый
+                messagesContainer._scrollListener = updateStickyHeader;
+                messagesContainer.addEventListener('scroll', updateStickyHeader);
+
+                // Вызываем сразу для установки
+                setTimeout(updateStickyHeader, 10);
+
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             });
         }
 
         async function sendMessage() {
             const text = messageInput.value.trim();
-            if (!text && !currentChatUser) {
+            if (!text || !currentChatUser) {
                 if (!currentChatUser) alert('Сначала выберите чат!');
                 return;
             }
@@ -1624,71 +1830,123 @@
                 });
                 messageInput.value = '';
                 autoResizeTextarea();
+
+                const chatIndex = chats.findIndex(c => c.uid === currentChatUser.uid);
+                if (chatIndex !== -1) {
+                    chats[chatIndex].lastMessage = text;
+                    chats[chatIndex].lastTime = Date.now();
+                    chats.sort((a, b) => (b.lastTime || 0) - (a.lastTime || 0));
+                    renderChatsList();
+                }
             }
         }
 
         function openSettings() {
             document.getElementById('modalName').value = currentUser.name;
+            document.getElementById('modalUsername').value = currentUser.username || '';
             document.getElementById('modalPassword').value = '';
-            const modalContentDiv = document.getElementById('modalAvatarContent');
-            if (currentUser.avatar) {
-                modalContentDiv.innerHTML = `<img src="${currentUser.avatar}">`;
-            } else {
-                modalContentDiv.innerHTML = currentUser.name.charAt(0).toUpperCase();
-            }
+            const modalContent = document.getElementById('modalAvatarContent');
+            modalContent.innerHTML = currentUser.avatar ? `<img src="${currentUser.avatar}">` : currentUser.name.charAt(0).toUpperCase();
             settingsModal.classList.remove('hidden');
         }
 
         async function saveSettings() {
             const newName = document.getElementById('modalName').value.trim();
+            const newUsername = document.getElementById('modalUsername').value.trim().toLowerCase();
             const newPassword = document.getElementById('modalPassword').value;
+
             if (newName && newName !== currentUser.name) {
                 await updateDoc(doc(db, 'users', currentUser.uid), { name: newName });
                 currentUser.name = newName;
-                document.getElementById('myName').innerText = newName;
+                myName.innerText = newName;
                 updateMyAvatar();
                 updateChatHeader();
                 renderChatsList();
+                showNotification('✅ Имя обновлено');
             }
+
+            if (newUsername && newUsername !== currentUser.username) {
+                const usernameError = validateUsername(newUsername);
+                if (usernameError) {
+                    showNotification(`❌ ${usernameError}`, true);
+                    return;
+                }
+                const isUnique = await isUsernameUnique(newUsername, currentUser.uid);
+                if (!isUnique) {
+                    showNotification('❌ Этот юзернейм уже занят', true);
+                    return;
+                }
+                await updateDoc(doc(db, 'users', currentUser.uid), { username: newUsername });
+                currentUser.username = newUsername;
+                if (myUsername) myUsername.innerText = `@${newUsername}`;
+                updateChatHeader();
+                renderChatsList();
+                showNotification('✅ Юзернейм обновлён');
+            }
+
             if (newPassword) {
                 await updatePassword(auth.currentUser, newPassword);
+                showNotification('✅ Пароль обновлён');
             }
+
             settingsModal.classList.add('hidden');
-            alert('✅ Профиль обновлён!');
         }
+
+        document.getElementById('sendMsgBtn')?.addEventListener('click', sendMessage);
+        document.getElementById('settingsBtn')?.addEventListener('click', openSettings);
+        document.getElementById('saveSettingsBtn')?.addEventListener('click', saveSettings);
+        document.getElementById('closeSettingsBtn')?.addEventListener('click', () => settingsModal.classList.add('hidden'));
+        document.getElementById('logoutFromSettingsBtn')?.addEventListener('click', logout);
+        messageInput?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        searchInput?.addEventListener('input', (e) => searchUsers(e.target.value));
+        document.addEventListener('click', (e) => {
+            if (searchResults && !searchResults.contains(e.target) && e.target !== searchInput) {
+                searchResults.classList.add('hidden');
+            }
+        });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 let userData = userDoc.data();
                 if (!userData) {
-                    userData = { name: user.email.split('@')[0], online: true };
+                    const tempUsername = user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_');
+                    userData = {
+                        name: user.email.split('@')[0],
+                        username: tempUsername,
+                        online: true,
+                        lastSeen: Date.now()
+                    };
                     await setDoc(doc(db, 'users', user.uid), {
                         uid: user.uid,
                         name: user.email.split('@')[0],
+                        username: tempUsername,
                         email: user.email,
                         online: true,
+                        lastSeen: Date.now(),
                         avatar: null
                     });
-                } else {
-                    await updateDoc(doc(db, 'users', user.uid), { online: true });
                 }
                 currentUser = { uid: user.uid, ...userData };
-                document.getElementById('myName').innerText = currentUser.name;
+                myName.innerText = currentUser.name;
+                if (myUsername) myUsername.innerText = `@${currentUser.username || currentUser.name.toLowerCase()}`;
                 updateMyAvatar();
                 loginContainer.classList.add('hidden');
                 messengerEl.classList.remove('hidden');
                 loadChats();
                 subscribeToMyStatus();
                 await setupPresence();
-                setInterval(async () => {
-                    if (currentUser) {
-                        await updateDoc(doc(db, 'users', currentUser.uid), { online: true, lastSeen: Date.now() });
-                    }
-                }, 30000);
+                showNotification('✅ Вы вошли');
             } else {
+                if (messagesUnsubscribe) messagesUnsubscribe();
                 if (onlineStatusUnsubscribe) onlineStatusUnsubscribe();
                 if (userStatusUnsubscribe) userStatusUnsubscribe();
+                if (presenceInterval) clearInterval(presenceInterval);
                 currentUser = null;
                 currentChatUser = null;
                 loginContainer.classList.remove('hidden');
@@ -1697,35 +1955,6 @@
                 messagesContainer.style.display = 'none';
                 messageInputArea.style.display = 'none';
                 emptyState.style.display = 'flex';
-            }
-        });
-
-        document.getElementById('loginBtn').addEventListener('click', () => window.login());
-        document.getElementById('registerBtn').addEventListener('click', () => window.register());
-        document.getElementById('settingsBtn')?.addEventListener('click', openSettings);
-        document.getElementById('saveSettingsBtn')?.addEventListener('click', saveSettings);
-        document.getElementById('closeSettingsBtn')?.addEventListener('click', () => {
-            settingsModal.classList.add('hidden');
-        });
-        document.getElementById('logoutFromSettingsBtn')?.addEventListener('click', logout);
-        document.getElementById('sendMsgBtn')?.addEventListener('click', sendMessage);
-
-        if (messageInput) {
-            messageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-        }
-
-        searchInput.addEventListener('input', (e) => {
-            searchUsers(e.target.value);
-        });
-
-        document.addEventListener('click', (e) => {
-            if (searchResults && !searchResults.contains(e.target) && e.target !== searchInput) {
-                searchResults.classList.add('hidden');
             }
         });
     </script>
